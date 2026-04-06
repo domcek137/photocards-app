@@ -15,11 +15,11 @@
     },
     {
       "from": ".next/static",
-      "to": "next/.next/static"
+      "to": "next/standalone/photocards-app/.next/static"
     },
     {
       "from": "public",
-      "to": "next/public"
+      "to": "next/standalone/photocards-app/public"
     }
   ],
   "mac": {

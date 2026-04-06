@@ -1,5 +1,6 @@
 const { app, BrowserWindow, dialog } = require("electron");
-const { fork } = require("node:child_process");
+const { spawn } = require("node:child_process");
+const fs = require("node:fs");
 const http = require("node:http");
 const net = require("node:net");
 const path = require("node:path");
@@ -60,28 +61,77 @@ const waitForUrl = async (url, timeoutMs = 30000) => {
   throw new Error(`Timed out waiting for server at ${url}`);
 };
 
+const resolveStandaloneServerPath = (resourcesRoot) => {
+  const standaloneRoot = app.isPackaged
+    ? path.join(resourcesRoot, "next", "standalone")
+    : path.join(resourcesRoot, ".next", "standalone");
+
+  const directServer = path.join(standaloneRoot, "server.js");
+  if (fs.existsSync(directServer)) {
+    return directServer;
+  }
+
+  if (!fs.existsSync(standaloneRoot)) {
+    throw new Error(`Standalone directory not found: ${standaloneRoot}`);
+  }
+
+  const nestedServer = fs
+    .readdirSync(standaloneRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(standaloneRoot, entry.name, "server.js"))
+    .find((candidate) => fs.existsSync(candidate));
+
+  if (nestedServer) {
+    return nestedServer;
+  }
+
+  throw new Error(`Could not locate standalone server.js in: ${standaloneRoot}`);
+};
+
 const startBundledNextServer = async () => {
   const port = await findFreePort();
   const resourcesRoot = app.isPackaged ? process.resourcesPath : app.getAppPath();
-  const standalonePath = app.isPackaged
-    ? path.join(resourcesRoot, "next", "standalone", "server.js")
-    : path.join(resourcesRoot, ".next", "standalone", "server.js");
+  const standalonePath = resolveStandaloneServerPath(resourcesRoot);
 
   process.env.PHOTOCARDS_DATA_PATH = app.getPath("userData");
 
-  nextServerProcess = fork(standalonePath, [], {
+  const nodeRunner = app.isPackaged ? process.execPath : "node";
+
+  nextServerProcess = spawn(nodeRunner, [standalonePath], {
     cwd: path.dirname(standalonePath),
-    stdio: "pipe",
+    stdio: ["ignore", "pipe", "pipe"],
     env: {
       ...process.env,
+      ELECTRON_RUN_AS_NODE: app.isPackaged ? "1" : process.env.ELECTRON_RUN_AS_NODE,
       PORT: String(port),
       HOSTNAME: "127.0.0.1",
       PHOTOCARDS_DATA_PATH: app.getPath("userData"),
     },
+    windowsHide: true,
+  });
+
+  nextServerProcess.stdout.on("data", (chunk) => {
+    const text = chunk.toString();
+    if (text.trim()) {
+      console.log(`[next] ${text.trim()}`);
+    }
+  });
+
+  nextServerProcess.stderr.on("data", (chunk) => {
+    const text = chunk.toString();
+    if (text.trim()) {
+      console.error(`[next:error] ${text.trim()}`);
+    }
   });
 
   nextServerProcess.on("error", (error) => {
     console.error("Next server process failed:", error);
+  });
+
+  nextServerProcess.once("exit", (code, signal) => {
+    if (code !== 0) {
+      console.error(`Next server exited before readiness. code=${code ?? "null"}, signal=${signal ?? "null"}`);
+    }
   });
 
   const appUrl = `http://127.0.0.1:${port}`;
