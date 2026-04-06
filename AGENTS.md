@@ -21,5 +21,6 @@ This project is a Next.js app with filesystem-backed flashcard sets.
 
 - Use the existing study, gallery, and batch-import components as the main UX entry points.
 - When adding or editing cards, update both the filesystem data and the returned `Flashcard` object.
+- When changing repo guidance, update this file and [README.md](README.md) together so agent notes and user docs stay aligned.
 - Keep theme-related UI text and SSR output stable to avoid hydration mismatches.
 <!-- END:nextjs-agent-rules -->

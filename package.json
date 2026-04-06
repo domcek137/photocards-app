@@ -2,9 +2,14 @@
   "name": "photocards-app",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "next dev",
+    "dev:electron": "concurrently -k \"next dev\" \"wait-on http://127.0.0.1:3000 && cross-env ELECTRON_START_URL=http://127.0.0.1:3000 electron .\"",
     "build": "next build",
+    "build:desktop": "next build && electron-builder --dir",
+    "build:desktop:mac": "next build && electron-builder --mac dmg",
+    "build:desktop:dir": "next build && electron-builder --dir",
     "start": "next start",
     "lint": "eslint"
   },
@@ -18,9 +23,14 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^36.2.1",
+    "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^8.0.3"
   }
 }

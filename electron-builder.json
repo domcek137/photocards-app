@@ -1,0 +1,40 @@
+{
+  "appId": "com.photocards.app",
+  "productName": "Photocards",
+  "directories": {
+    "output": "dist-desktop"
+  },
+  "files": [
+    "electron/**/*",
+    "package.json"
+  ],
+  "extraResources": [
+    {
+      "from": ".next/standalone",
+      "to": "next/standalone"
+    },
+    {
+      "from": ".next/static",
+      "to": "next/.next/static"
+    },
+    {
+      "from": "public",
+      "to": "next/public"
+    }
+  ],
+  "mac": {
+    "target": [
+      "dmg"
+    ],
+    "category": "public.app-category.education"
+  },
+  "win": {
+    "target": [
+      "dir"
+    ],
+    "signAndEditExecutable": false
+  },
+  "dmg": {
+    "writeUpdateInfo": false
+  }
+}

@@ -50,6 +50,12 @@ const ALLOWED_MIME_TYPES = new Set([
 ]);
 
 const getSetsRootPath = (): string => {
+  const dataPath = process.env.PHOTOCARDS_DATA_PATH?.trim();
+
+  if (dataPath) {
+    return path.join(dataPath, "sets");
+  }
+
   return path.join(process.cwd(), "sets");
 };
 

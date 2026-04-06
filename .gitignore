@@ -19,6 +19,8 @@
 
 # production
 /build
+/dist-desktop
+/dist-desktop/
 
 # generated flashcard data
 /sets/
