@@ -2,6 +2,8 @@ import SetCreator from "@/components/sets/SetCreator";
 import SetBrowser from "@/components/sets/SetBrowser";
 import { listAllTags, listSets } from "@/lib/storage";
 
+export const dynamic = "force-dynamic";
+
 export default async function SetsPage() {
   const [sets, tags] = await Promise.all([listSets(), listAllTags()]);
 

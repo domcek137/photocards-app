@@ -87,6 +87,16 @@ On macOS, the distributable is written as a `.dmg` inside `dist-desktop/`.
 
 Generated set data lives under the repository root in `sets/`.
 
+When you run the packaged Electron app, data is stored in your user profile instead of the repo. On Windows, the packaged app writes to:
+
+```text
+%APPDATA%/photocards-app/sets/
+```
+
+That is the folder to check for sets created from the `.exe`.
+
+On first launch, the packaged app copies any bundled starter sets from the install bundle into that writable folder. The files under `dist-desktop/win-unpacked/resources/next/standalone/photocards-app/sets/` are part of the packaged app payload, not the live save location.
+
 Each set uses this structure:
 
 ```text

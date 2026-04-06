@@ -1,6 +1,7 @@
 const { app, BrowserWindow, dialog } = require("electron");
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
+const fsp = require("node:fs/promises");
 const http = require("node:http");
 const net = require("node:net");
 const path = require("node:path");
@@ -88,12 +89,81 @@ const resolveStandaloneServerPath = (resourcesRoot) => {
   throw new Error(`Could not locate standalone server.js in: ${standaloneRoot}`);
 };
 
+const resolveStandaloneAppRoot = (resourcesRoot) => {
+  const standaloneRoot = app.isPackaged
+    ? path.join(resourcesRoot, "next", "standalone")
+    : path.join(resourcesRoot, ".next", "standalone");
+
+  const bundledAppRoot = path.join(standaloneRoot, "photocards-app");
+  const directServer = path.join(standaloneRoot, "server.js");
+
+  if (fs.existsSync(directServer)) {
+    return standaloneRoot;
+  }
+
+  if (fs.existsSync(path.join(bundledAppRoot, "server.js"))) {
+    return bundledAppRoot;
+  }
+
+  if (!fs.existsSync(standaloneRoot)) {
+    throw new Error(`Standalone directory not found: ${standaloneRoot}`);
+  }
+
+  const nestedAppRoot = fs
+    .readdirSync(standaloneRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(standaloneRoot, entry.name))
+    .find((candidate) => fs.existsSync(path.join(candidate, "server.js")));
+
+  if (nestedAppRoot) {
+    return nestedAppRoot;
+  }
+
+  throw new Error(`Could not locate bundled app root in: ${standaloneRoot}`);
+};
+
+const seedBundledSetsIntoUserData = async (resourcesRoot) => {
+  if (!app.isPackaged) {
+    return;
+  }
+
+  const bundledAppRoot = resolveStandaloneAppRoot(resourcesRoot);
+  const bundledSetsRoot = path.join(bundledAppRoot, "sets");
+  if (!fs.existsSync(bundledSetsRoot)) {
+    return;
+  }
+
+  const targetSetsRoot = path.join(app.getPath("userData"), "sets");
+  await fsp.mkdir(targetSetsRoot, { recursive: true });
+
+  const bundledEntries = await fsp.readdir(bundledSetsRoot, { withFileTypes: true });
+  for (const entry of bundledEntries) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+
+    const sourceSetPath = path.join(bundledSetsRoot, entry.name);
+    const targetSetPath = path.join(targetSetsRoot, entry.name);
+
+    if (fs.existsSync(targetSetPath)) {
+      continue;
+    }
+
+    await fsp.cp(sourceSetPath, targetSetPath, {
+      recursive: true,
+      errorOnExist: false,
+      force: false,
+    });
+  }
+};
+
 const startBundledNextServer = async () => {
   const port = await findFreePort();
   const resourcesRoot = app.isPackaged ? process.resourcesPath : app.getAppPath();
   const standalonePath = resolveStandaloneServerPath(resourcesRoot);
 
   process.env.PHOTOCARDS_DATA_PATH = app.getPath("userData");
+  await seedBundledSetsIntoUserData(resourcesRoot);
 
   const nodeRunner = app.isPackaged ? process.execPath : "node";
 
@@ -167,6 +237,8 @@ const createMainWindow = async () => {
       preload: path.join(__dirname, "preload.cjs"),
     },
   });
+
+  mainWindow.maximize();
 
   await mainWindow.loadURL(urlToLoad);
 
