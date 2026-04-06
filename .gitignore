@@ -20,6 +20,9 @@
 # production
 /build
 
+# generated flashcard data
+/sets/
+
 # misc
 .DS_Store
 *.pem

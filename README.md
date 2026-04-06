@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Photocards App
 
-## Getting Started
+Photocards App is a Next.js study tool for image-and-text flashcards. Sets are stored on disk and can be created, browsed, batch imported, edited, and studied in a browser.
 
-First, run the development server:
+## What it does
+
+- Create flashcard sets with a name, description, and tags.
+- Add cards one at a time or import them in batch.
+- Store card photos and text in a filesystem-backed `sets/` directory.
+- Study cards with flip, shuffle, reset, and progress tracking.
+- Switch between light and dark themes.
+
+## Local development
+
+Run the app with:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Build for production with:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If PowerShell blocks npm scripts on Windows, use:
 
-## Learn More
+```powershell
+cmd /c npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Storage layout
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Generated set data lives under the repository root in `sets/`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Each set uses this structure:
 
-## Deploy on Vercel
+```text
+sets/
+	<set-id>/
+		metadata.json
+		photos/
+		texts/
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The `sets/` directory is ignored by Git because it is runtime data.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes for contributors
+
+- Keep set IDs lowercase and filesystem-safe.
+- Preserve the current filesystem-backed storage model unless there is a strong reason to change it.
+- Update the relevant API route and storage helper together when changing card persistence.
+- Re-run `npm run build` after edits that touch rendering, routing, or storage.
