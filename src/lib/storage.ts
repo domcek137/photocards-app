@@ -33,6 +33,11 @@ type UpdateCardInput = {
   imageOriginalName?: string;
 };
 
+type UpdateSetInput = {
+  setId: string;
+  name: string;
+};
+
 type AddBatchCardsInput = {
   setId: string;
   photos: File[];
@@ -461,6 +466,59 @@ export const updateCard = async (
     imageUrl: `/api/sets/${encodeURIComponent(input.setId)}/photos/${encodeURIComponent(imageName)}`,
     backText: textValue,
   };
+};
+
+export const deleteCard = async (setId: string, cardId: string): Promise<void> => {
+  assertValidSetId(setId);
+
+  const cardNumber = getCardNumberFromId(cardId);
+  const textsPath = getTextsPath(setId);
+  const photosPath = getPhotosPath(setId);
+
+  const textPath = safeResolveWithin(textsPath, `${cardNumber}.txt`);
+  const photoName = await findPhotoFileName(photosPath, cardNumber);
+
+  await fs.unlink(textPath).catch(() => undefined);
+
+  if (photoName) {
+    const photoPath = safeResolveWithin(photosPath, photoName);
+    await fs.unlink(photoPath).catch(() => undefined);
+  }
+};
+
+export const updateSet = async (input: UpdateSetInput): Promise<FlashcardSet> => {
+  assertValidSetId(input.setId);
+
+  const name = input.name.trim();
+  if (!name) {
+    throw new Error("Set name is required.");
+  }
+
+  const metadata = await readMetadata(input.setId);
+  const nextMetadata: SetMetadata = {
+    ...metadata,
+    name,
+  };
+
+  const metadataPath = getMetadataPath(input.setId);
+  await fs.writeFile(metadataPath, JSON.stringify(nextMetadata, null, 2), "utf8");
+
+  const cards = await readCardFiles(input.setId);
+
+  return {
+    id: nextMetadata.id,
+    name: nextMetadata.name,
+    description: nextMetadata.description,
+    tags: nextMetadata.tags,
+    cards,
+  };
+};
+
+export const deleteSet = async (setId: string): Promise<void> => {
+  assertValidSetId(setId);
+
+  const setPath = getSetPath(setId);
+  await fs.rm(setPath, { recursive: true, force: true });
 };
 
 export const addBatchCards = async (

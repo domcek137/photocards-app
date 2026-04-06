@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { updateCard } from "@/lib/storage";
+import { deleteCard, updateCard } from "@/lib/storage";
 
 export async function PATCH(
   request: Request,
@@ -34,6 +34,20 @@ export async function PATCH(
     return NextResponse.json({ card }, { status: 200 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to update card.";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ setId: string; cardId: string }> },
+) {
+  try {
+    const { setId, cardId } = await params;
+    await deleteCard(setId, cardId);
+    return NextResponse.json({ ok: true }, { status: 200 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to delete card.";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddCardForm from "@/components/sets/AddCardForm";
 import CardGallery from "@/components/sets/CardGallery";
+import SetActions from "@/components/sets/SetActions";
 import { getSetById } from "@/lib/storage";
 
 type SetDetailPageProps = {
@@ -40,6 +41,10 @@ export default async function SetDetailPage({ params }: SetDetailPageProps) {
           Batch import
         </Link>
       </header>
+
+      <div className="mb-6">
+        <SetActions setId={setItem.id} initialName={setItem.name} />
+      </div>
 
       <div className="mb-6">
         <AddCardForm setId={setItem.id} />

@@ -20,8 +20,13 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const totalPages = Math.max(1, Math.ceil(galleryCards.length / PAGE_SIZE));
+
+  useEffect(() => {
+    setPage((currentPage) => Math.min(currentPage, totalPages));
+  }, [totalPages]);
 
   useEffect(() => {
     setGalleryCards(cards);
@@ -57,6 +62,45 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
     setImagePreview(null);
     setMessage(null);
     setIsSaving(false);
+    setIsDeleting(false);
+  };
+
+  const onDeleteCard = async () => {
+    if (!editingCard) {
+      return;
+    }
+
+    const confirmed = window.confirm("Delete this card? This cannot be undone.");
+    if (!confirmed) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(
+        `/api/sets/${encodeURIComponent(setId)}/cards/${encodeURIComponent(editingCard.id)}`,
+        {
+          method: "DELETE",
+        },
+      );
+      const payload = (await response.json()) as { error?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Failed to delete card.");
+      }
+
+      setGalleryCards((currentCards) =>
+        currentCards.filter((card) => card.id !== editingCard.id),
+      );
+
+      closeEditor();
+    } catch (error) {
+      const text = error instanceof Error ? error.message : "Failed to delete card.";
+      setMessage(text);
+      setIsDeleting(false);
+    }
   };
 
   const onEditSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -133,7 +177,7 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
             type="button"
             onClick={() => openEditor(card)}
             className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900"
-              aria-label={`Edit ${card.backText}`}
+            aria-label={`Edit ${card.backText}`}
           >
             <div className="relative h-40 w-full">
               <Image
@@ -254,14 +298,23 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
               <div className="flex flex-wrap gap-2">
                 <button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={isSaving || isDeleting}
                   className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900"
                 >
                   {isSaving ? "Saving..." : "Save changes"}
                 </button>
                 <button
                   type="button"
+                  onClick={onDeleteCard}
+                  disabled={isSaving || isDeleting}
+                  className="rounded-lg border border-rose-300 px-4 py-2 text-sm font-medium text-rose-700 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-700 dark:text-rose-200"
+                >
+                  {isDeleting ? "Deleting..." : "Delete card"}
+                </button>
+                <button
+                  type="button"
                   onClick={closeEditor}
+                  disabled={isDeleting}
                   className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 dark:border-slate-600 dark:text-slate-200"
                 >
                   Cancel
