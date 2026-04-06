@@ -49,6 +49,7 @@ export default function FlipCard({
                 fill
                 sizes="(max-width: 1024px) 100vw, 1024px"
                 className="object-contain"
+                loading="eager"
                 onLoad={(event) => {
                   const imageElement = event.currentTarget;
                   if (imageElement.naturalWidth > 0 && imageElement.naturalHeight > 0) {

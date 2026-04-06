@@ -15,13 +15,14 @@ Photocards App is a Next.js study tool for image-and-text flashcards. Sets are s
 Run the app with:
 
 ```bash
-npm run dev
+cd photocards-app
+npm.cmd run dev
 ```
 
 Build for production with:
 
 ```bash
-npm run build
+npm.cmd run build
 ```
 
 If PowerShell blocks npm scripts on Windows, use:
