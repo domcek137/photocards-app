@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import HeaderBackLink from "@/components/HeaderBackLink";
 import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
@@ -48,7 +49,8 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="min-h-full flex flex-col">
-        <div className="sticky top-0 z-20 flex justify-end border-b border-slate-200/70 bg-background/80 px-4 py-4 backdrop-blur dark:border-slate-700/60">
+        <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200/70 bg-background/80 px-4 py-4 backdrop-blur dark:border-slate-700/60">
+          <HeaderBackLink />
           <ThemeToggle />
         </div>
         {children}

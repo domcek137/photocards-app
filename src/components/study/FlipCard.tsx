@@ -48,7 +48,7 @@ export default function FlipCard({
                 alt="Flashcard front"
                 fill
                 sizes="(max-width: 1024px) 100vw, 1024px"
-                className="object-contain transition-transform duration-500 group-hover:scale-105"
+                className="object-contain"
                 loading="eager"
                 onLoad={(event) => {
                   const imageElement = event.currentTarget;

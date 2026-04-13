@@ -227,7 +227,7 @@ export default function StudySession({ cards }: StudySessionProps) {
               <p className="text-3xl font-bold text-red-700 dark:text-red-300">
                 {roundUnknownCount}
               </p>
-              <p className="text-xs text-red-600 dark:text-red-400 font-semibold mt-2">Don't know</p>
+              <p className="text-xs text-red-600 dark:text-red-400 font-semibold mt-2">Don&apos;t know</p>
             </div>
           </div>
 
@@ -267,70 +267,61 @@ export default function StudySession({ cards }: StudySessionProps) {
 
   return (
     <div className="space-y-6">
-      {/* Progress bar */}
-      <div className="rounded-3xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-lg dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 transition-all duration-300">
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div>
-            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              {mode === "learn-again" ? "🧠 Learn again" : "📚 Study progress"}
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Card {index + 1} of {order.length}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
-              {Math.round(progress)}%
-            </p>
-          </div>
-        </div>
-        <div
-          className="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700 shadow-inner"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={order.length}
-          aria-valuenow={index + 1}
-          aria-label="Study progress"
-        >
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 transition-all duration-500 ease-out shadow-lg"
-            style={{ width: `${progress}%` }}
+      <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
+        <div className="min-w-0 flex-1">
+          <FlipCard
+            key={currentCard.id}
+            imageUrl={currentCard.imageUrl}
+            backText={currentCard.backText}
+            cardNumber={index + 1}
+            totalCards={order.length}
           />
         </div>
 
-        {/* Know / Don't know stats */}
-        {roundTaggedCount > 0 && (
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            <div className="rounded-lg bg-gradient-to-br from-green-50 to-green-50/50 dark:from-green-950/30 dark:to-green-950/50 px-3 py-2 border border-green-200 dark:border-green-700">
-              <span className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs font-semibold">Know: {roundKnownCount}</span>
-              </span>
-            </div>
-            <div className="rounded-lg bg-gradient-to-br from-red-50 to-red-50/50 dark:from-red-950/30 dark:to-red-950/50 px-3 py-2 border border-red-200 dark:border-red-700">
-              <span className="flex items-center gap-2 text-red-700 dark:text-red-400">
-                <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-xs font-semibold">Don't: {roundUnknownCount}</span>
-              </span>
-            </div>
-            {mode === "all" && (
-              <div className="rounded-lg bg-gradient-to-br from-slate-50 to-slate-50/50 dark:from-slate-800 dark:to-slate-800/50 px-3 py-2 border border-slate-200 dark:border-slate-700">
-                <span className="text-slate-600 dark:text-slate-400 text-xs font-semibold">
-                  Untagged: {order.length - roundTaggedCount}
-                </span>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+        <aside className="md:w-32">
+          <div className="flex h-full flex-col rounded-3xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-lg dark:border-slate-700 dark:from-slate-900 dark:to-slate-950">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+              {mode === "learn-again" ? "Learn again" : "Study progress"}
+            </p>
+            <p className="mt-1 text-2xl font-bold text-cyan-600 dark:text-cyan-400">
+              {Math.round(progress)}%
+            </p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              {roundTaggedCount} / {order.length}
+            </p>
 
-      <FlipCard
-        key={currentCard.id}
-        imageUrl={currentCard.imageUrl}
-        backText={currentCard.backText}
-        cardNumber={index + 1}
-        totalCards={order.length}
-      />
+            <div className="my-4 flex flex-1 items-end justify-center pb-2">
+              <div
+                className="relative h-full min-h-32 w-4 overflow-hidden rounded-full bg-slate-200 shadow-inner dark:bg-slate-700"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={order.length}
+                aria-valuenow={roundTaggedCount}
+                aria-label="Study progress"
+              >
+                <div
+                  className="absolute inset-x-0 bottom-0 rounded-full bg-gradient-to-t from-cyan-500 via-blue-500 to-cyan-400 transition-all duration-500 ease-out"
+                  style={{ height: `${progress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <div className="rounded-lg border border-green-200 bg-green-50 px-2 py-1.5 text-xs font-semibold text-green-700 dark:border-green-700 dark:bg-green-950/30 dark:text-green-300">
+                Know: {roundKnownCount}
+              </div>
+              <div className="rounded-lg border border-red-200 bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-700 dark:border-red-700 dark:bg-red-950/30 dark:text-red-300">
+                Don&apos;t: {roundUnknownCount}
+              </div>
+              {mode === "all" && (
+                <div className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
+                  Untagged: {order.length - roundTaggedCount}
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+      </div>
 
       {/* Know / Don't know buttons */}
       <div className="flex gap-3">
@@ -343,7 +334,7 @@ export default function StudySession({ cards }: StudySessionProps) {
               : "border-red-300 text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/30"
           }`}
         >
-          ✗ Don't know
+          ✗ Don&apos;t know
         </button>
         <button
           type="button"

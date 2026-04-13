@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import BatchImportForm from "@/components/sets/BatchImportForm";
 import { getSetById } from "@/lib/storage";
@@ -17,11 +16,7 @@ export default async function BatchImportPage({ params }: BatchImportPageProps) 
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
-      <Link href={`/sets/${setItem.id}`} className="text-sm font-medium text-cyan-700">
-        Back to set
-      </Link>
-
-      <header className="mb-6 mt-3">
+      <header className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
           Batch Import: {setItem.name}
         </h1>

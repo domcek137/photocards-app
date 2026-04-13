@@ -237,7 +237,7 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
               <button
                 type="button"
                 onClick={closeEditor}
-                className="rounded-lg border-2 border-slate-300 hover:border-slate-400 px-3 py-2 text-sm font-bold text-slate-700 transition-all duration-200 dark:border-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="rounded-lg border-2 border-slate-300 px-3 py-2 text-sm font-bold text-slate-700 transition-all duration-200 hover:border-slate-400 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 ✕
               </button>
@@ -313,7 +313,7 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-3 pt-4 border-t-2 border-slate-200 dark:border-slate-700">
+              <div className="flex items-center gap-3 border-t-2 border-slate-200 pt-4 dark:border-slate-700">
                 <button
                   type="submit"
                   disabled={isSaving || isDeleting}
@@ -325,17 +325,9 @@ export default function CardGallery({ setId, cards }: CardGalleryProps) {
                   type="button"
                   onClick={onDeleteCard}
                   disabled={isSaving || isDeleting}
-                  className="rounded-lg border-2 border-rose-300 hover:border-rose-400 bg-rose-50 hover:bg-rose-100 px-4 py-2 text-sm font-bold text-rose-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 dark:border-rose-700 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 dark:text-rose-200 shadow-md"
+                  className="ml-auto rounded-lg border-2 border-rose-300 bg-rose-50 px-4 py-2 text-sm font-bold text-rose-700 transition-all duration-200 hover:border-rose-400 hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-rose-700 dark:bg-rose-950/30 dark:text-rose-200 dark:hover:bg-rose-950/50"
                 >
-                  {isDeleting ? "🗑️ Deleting..." : "🗑️ Delete"}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeEditor}
-                  disabled={isDeleting}
-                  className="rounded-lg border-2 border-slate-300 hover:border-slate-400 px-4 py-2 text-sm font-bold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 dark:border-slate-600 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-md"
-                >
-                  Cancel
+                  {isDeleting ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </form>
