@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { Flashcard } from "@/lib/types";
 import FlipCard from "@/components/study/FlipCard";
 
@@ -94,6 +94,28 @@ export default function StudySession({ cards }: StudySessionProps) {
     setIndex(0);
     setMode("learn-again");
   };
+
+  useEffect(() => {
+    if (mode !== "learn-again") return;
+
+    const unknownCards = cards.filter((card) => unknownIds.has(card.id));
+
+    setOrder((previousOrder) => {
+      if (
+        previousOrder.length === unknownCards.length &&
+        previousOrder.every((card, position) => card.id === unknownCards[position]?.id)
+      ) {
+        return previousOrder;
+      }
+
+      return unknownCards;
+    });
+
+    setIndex((previousIndex) => {
+      if (unknownCards.length === 0) return 0;
+      return Math.min(previousIndex, unknownCards.length - 1);
+    });
+  }, [cards, mode, unknownIds]);
 
   const currentCard = order[index];
 
