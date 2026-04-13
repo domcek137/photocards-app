@@ -102,7 +102,7 @@ export default function StudySession({ cards }: StudySessionProps) {
       return (
         <div className="space-y-4">
           <p className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-800 dark:border-green-700 dark:bg-green-950/30 dark:text-green-200">
-            No cards marked as &quot;don&apos;t know&quot;. Great job!
+            {"No cards marked as \"don't know\". Great job!"}
           </p>
           <button
             type="button"
