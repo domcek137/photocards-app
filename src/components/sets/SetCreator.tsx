@@ -73,67 +73,79 @@ export default function SetCreator() {
   };
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Create Set</h2>
-      <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-        Creates a new flashcard set with a unique ID. Add name and description to get started.
-      </p>
+    <section className="rounded-3xl border-2 border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-lg dark:border-slate-700 dark:from-slate-900 dark:to-slate-950 animate-fadeInUp">
+      <div className="flex items-start gap-4">
+        <div className="text-4xl">✨</div>
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Create Set</h2>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            Create a new flashcard set with auto-generated ID. Add name and description to get started.
+          </p>
+        </div>
+      </div>
 
-      <form className="mt-4 grid gap-3 md:grid-cols-2" onSubmit={onSubmit}>
-        <label className="space-y-1">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Name</span>
+      <form className="mt-6 grid gap-4 md:grid-cols-2" onSubmit={onSubmit}>
+        <label className="space-y-2 group">
+          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Set Name</span>
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Set title"
+            placeholder="e.g., Spanish Vocabulary"
             required
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-cyan-300 transition focus:ring dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
+            className="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none ring-cyan-300 transition-all duration-300 focus:ring-2 focus:border-cyan-400 hover:border-slate-400 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-cyan-400"
           />
         </label>
 
-        <label className="space-y-1 md:col-span-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Description</span>
+        <label className="space-y-2 group md:col-span-2">
+          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Description</span>
           <input
             value={description}
             onChange={(event) => setDescription(event.target.value)}
-            placeholder="Optional description"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-cyan-300 transition focus:ring dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
+            placeholder="What's this set about?"
+            className="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none ring-cyan-300 transition-all duration-300 focus:ring-2 focus:border-cyan-400 hover:border-slate-400 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-cyan-400"
           />
         </label>
 
-        <label className="space-y-1 md:col-span-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">Tags</span>
+        <label className="space-y-2 group md:col-span-2">
+          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Tags</span>
           <input
             value={tags}
             onChange={(event) => setTags(event.target.value)}
-            placeholder="comma,separated,tags"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-cyan-300 transition focus:ring dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100"
+            placeholder="language,spanish,beginner"
+            className="w-full rounded-xl border-2 border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none ring-cyan-300 transition-all duration-300 focus:ring-2 focus:border-cyan-400 hover:border-slate-400 dark:border-slate-600 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-cyan-400"
           />
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Separate tags with commas</p>
         </label>
 
-        <label className="flex items-center gap-2 md:col-span-2">
+        <label className="flex items-center gap-3 md:col-span-2 p-3 rounded-xl bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30 border-2 border-cyan-200 dark:border-cyan-800 transition-all duration-300 hover:bg-cyan-100 dark:hover:from-cyan-950/50 dark:hover:to-blue-950/50 cursor-pointer">
           <input
             type="checkbox"
             checked={batchMode}
             onChange={(event) => setBatchMode(event.target.checked)}
-            className="h-4 w-4"
+            className="h-5 w-5 rounded border-slate-300 cursor-pointer"
           />
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
-            Batch option: go to batch import screen after creating set
+          <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex-1">
+            Go to batch import after creating
           </span>
         </label>
 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-fit rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-100 dark:text-slate-900"
+          className="md:col-span-2 rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 hover:from-slate-800 hover:to-slate-700 px-6 py-3 text-sm font-bold text-white dark:from-slate-100 dark:to-slate-200 dark:hover:from-slate-200 dark:hover:to-slate-300 dark:text-slate-900 transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 shadow-lg hover:shadow-xl"
         >
-          {isSubmitting ? "Creating..." : "Create set"}
+          {isSubmitting ? "🔄 Creating..." : "✨ Create set"}
         </button>
       </form>
 
       {message && (
-        <p className="mt-3 text-sm font-medium text-slate-700 dark:text-slate-200">{message}</p>
+        <div className={`mt-6 rounded-xl border-2 p-4 text-sm font-medium transition-all duration-300 animate-slideInRight ${
+          message.includes("error") || message.includes("Failed")
+            ? "border-red-200 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-950/30 dark:text-red-200"
+            : "border-green-200 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-950/30 dark:text-green-200"
+        }`}>
+          {message}
+        </div>
       )}
     </section>
   );
