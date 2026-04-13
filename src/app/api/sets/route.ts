@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createSet, listSets } from "@/lib/storage";
+import { createSet, listSets, generateSetId } from "@/lib/storage";
 
 export async function GET() {
   const sets = await listSets();
@@ -9,21 +9,21 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
-      setId?: string;
       name?: string;
       description?: string;
       tags?: string[];
     };
 
-    const setId = (body.setId || "").trim();
     const name = (body.name || "").trim();
 
-    if (!setId || !name) {
+    if (!name) {
       return NextResponse.json(
-        { error: "Both setId and name are required." },
+        { error: "Set name is required." },
         { status: 400 },
       );
     }
+
+    const setId = generateSetId();
 
     const createdSet = await createSet({
       setId,
