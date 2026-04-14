@@ -10,8 +10,17 @@ type StudySessionProps = {
   cards: Flashcard[];
 };
 
+const shuffleArray = (arr: Flashcard[]): Flashcard[] => {
+  const shuffled = [...arr];
+  for (let position = shuffled.length - 1; position > 0; position -= 1) {
+    const swapIndex = Math.floor(Math.random() * (position + 1));
+    [shuffled[position], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[position]];
+  }
+  return shuffled;
+};
+
 export default function StudySession({ cards }: StudySessionProps) {
-  const [order, setOrder] = useState<Flashcard[]>(() => [...cards]);
+  const [order, setOrder] = useState<Flashcard[]>(() => shuffleArray(cards));
   const [index, setIndex] = useState(0);
   const [knownIds, setKnownIds] = useState<Set<string>>(() => new Set());
   const [unknownIds, setUnknownIds] = useState<Set<string>>(() => new Set());
@@ -113,27 +122,8 @@ export default function StudySession({ cards }: StudySessionProps) {
     [advanceOrComplete],
   );
 
-  const shuffleArray = (arr: Flashcard[]): Flashcard[] => {
-    const shuffled = [...arr];
-    for (let position = shuffled.length - 1; position > 0; position -= 1) {
-      const swapIndex = Math.floor(Math.random() * (position + 1));
-      [shuffled[position], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[position]];
-    }
-    return shuffled;
-  };
-
-  const shuffleCards = () => {
-    if (mode === "learn-again") {
-      const unknownCards = cards.filter((card) => unknownIds.has(card.id));
-      setOrder(shuffleArray(unknownCards));
-    } else {
-      setOrder(shuffleArray([...cards]));
-    }
-    setIndex(0);
-  };
-
   const resetAll = () => {
-    setOrder([...cards]);
+    setOrder(shuffleArray(cards));
     setIndex(0);
     setKnownIds(new Set());
     setUnknownIds(new Set());
@@ -144,7 +134,7 @@ export default function StudySession({ cards }: StudySessionProps) {
   const startLearnAgain = () => {
     const unknownCards = cards.filter((card) => unknownIds.has(card.id));
     if (unknownCards.length === 0) return;
-    setOrder(unknownCards);
+    setOrder(shuffleArray(unknownCards));
     setIndex(0);
     setMode("learn-again");
     resetRoundTracking();
